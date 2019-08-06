@@ -2,16 +2,14 @@ const Joi = require('joi'); //moudle
 const mongoose = require('mongoose')
 const express = require('express')
 const app = express()
+const db = mongoose.connection
 
+app.use(express.json()); //method
 
 mongoose.connect('mongodb://localhost/users', { useNewUrlParser: true })
-const db = mongoose.connection
 db.on('error', (error) => console.error(error))
 db.once('open', () => console.log ('connected to database'))
 
-
-
-app.use(express.json()); //method
 
 const users = 
 [
@@ -72,7 +70,6 @@ app.post('/api/users', (req, res) => {
     res.status(400).send(result.error.details[0].message);
     return;
   }
-
   const user = {
     id: users.length + 1,
     name: req.body.name,
@@ -108,11 +105,7 @@ app.delete('/api/users/:id', (req, res) =>{
   users.splice(index, 1);
 
   res.send(user);
-
 });
-
-
-
 
 function validateUser(user) {
   const schema = {
@@ -120,10 +113,7 @@ function validateUser(user) {
   };
 
   return result = Joi.validate(user, schema);
-
 }
-
-
 
 port = process.env.PORT || 4000;
   app.listen(port, function () {
